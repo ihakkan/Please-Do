@@ -82,6 +82,7 @@ const SelectContent = React.forwardRef<
       )}
       position={position}
       {...props}
+      suppressHydrationWarning
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
