@@ -9,12 +9,12 @@ export function cn(...inputs: ClassValue[]) {
 export function getPriorityStyles(priority: Priority) {
   switch (priority) {
     case "high":
-      return "border-red-500/50 bg-red-500/10 text-red-400";
+      return "border-red-500/50 bg-red-900/50 text-red-300";
     case "medium":
-      return "border-yellow-500/50 bg-yellow-500/10 text-yellow-400";
+      return "border-yellow-500/50 bg-yellow-900/50 text-yellow-300";
     case "low":
-      return "border-green-500/50 bg-green-500/10 text-green-400";
+      return "border-green-500/50 bg-green-900/50 text-green-300";
     default:
-      return "border-gray-500/50 bg-gray-500/10 text-gray-400";
+      return "border-gray-500/50 bg-gray-800/50 text-gray-400";
   }
 }

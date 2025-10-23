@@ -36,12 +36,13 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
   const allCategoriesSelected = filter.categories.length === categories.length;
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-white/10">
       <div className="flex items-center gap-2">
         <Button
           variant={filter.status === "all" ? "secondary" : "ghost"}
           size="sm"
           onClick={() => handleStatusChange("all")}
+          className="text-foreground"
         >
           All
         </Button>
@@ -49,6 +50,7 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
           variant={filter.status === "pending" ? "secondary" : "ghost"}
           size="sm"
           onClick={() => handleStatusChange("pending")}
+           className="text-foreground"
         >
           Pending
         </Button>
@@ -56,18 +58,19 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
           variant={filter.status === "completed" ? "secondary" : "ghost"}
           size="sm"
           onClick={() => handleStatusChange("completed")}
+           className="text-foreground"
         >
           Completed
         </Button>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border-primary/50 text-primary">
             <SlidersHorizontal className="mr-2 h-4 w-4" />
             Filter
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent className="bg-background/80 backdrop-blur-xl border-primary/50">
           <DropdownMenuLabel>Category</DropdownMenuLabel>
           <DropdownMenuSeparator />
            <DropdownMenuCheckboxItem

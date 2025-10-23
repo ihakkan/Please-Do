@@ -5,6 +5,14 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -26,6 +34,7 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
   const [newTodoText, setNewTodoText] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [category, setCategory] = useState<Category>("personal");
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,53 +43,75 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
       setNewTodoText("");
       setPriority("medium");
       setCategory("personal");
+      setIsOpen(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-center">
-      <Input
-        type="text"
-        value={newTodoText}
-        onChange={(e) => setNewTodoText(e.target.value)}
-        placeholder="What needs to be done?"
-        aria-label="New todo input"
-        className="sm:col-span-2 text-base"
-      />
-      <Select
-        value={priority}
-        onValueChange={(value) => setPriority(value as Priority)}
+    <>
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-primary/80 backdrop-blur-sm shadow-lg shadow-primary/30 hover:bg-primary"
       >
-        <SelectTrigger aria-label="Priority">
-          <SelectValue placeholder="Priority" />
-        </SelectTrigger>
-        <SelectContent>
-          {priorities.map((p) => (
-            <SelectItem key={p} value={p}>
-              <span className="capitalize">{p}</span>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Select
-        value={category}
-        onValueChange={(value) => setCategory(value as Category)}
-      >
-        <SelectTrigger aria-label="Category">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          {categories.map((c) => (
-            <SelectItem key={c} value={c}>
-              <span className="capitalize">{c}</span>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-      <Button type="submit" aria-label="Add todo" className="sm:col-start-4">
-        <Plus className="h-5 w-5" />
-        Add Task
+        <Plus className="h-8 w-8" />
       </Button>
-    </form>
+
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-primary/50">
+          <DialogHeader>
+            <DialogTitle className="text-primary">Add New Task</DialogTitle>
+            <DialogDescription>
+              What do you need to get done?
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+            <Input
+              id="new-todo"
+              type="text"
+              value={newTodoText}
+              onChange={(e) => setNewTodoText(e.target.value)}
+              placeholder="e.g. Design a new UI"
+              className="col-span-3"
+              autoFocus
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Select
+                value={priority}
+                onValueChange={(value) => setPriority(value as Priority)}
+              >
+                <SelectTrigger aria-label="Priority">
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priorities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      <span className="capitalize">{p}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={category}
+                onValueChange={(value) => setCategory(value as Category)}
+              >
+                <SelectTrigger aria-label="Category">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      <span className="capitalize">{c}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="w-full">Add Task</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

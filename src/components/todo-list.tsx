@@ -7,14 +7,13 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
-  CardFooter,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "./todo-item";
 import { AddTodoForm } from "./add-todo-form";
 import { TodoFilters } from "./todo-filters";
 import { categories } from "@/lib/data";
+import { AnimatePresence, motion } from "framer-motion";
 
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
@@ -67,7 +66,6 @@ export function TodoList() {
     category: Category
   ) => {
     setTodos([
-      ...todos,
       {
         id: crypto.randomUUID(),
         text,
@@ -76,6 +74,7 @@ export function TodoList() {
         category,
         createdAt: Date.now(),
       },
+      ...todos,
     ]);
   };
 
@@ -115,50 +114,57 @@ export function TodoList() {
 
   const completedCount = todos.filter((t) => t.completed).length;
   const progress = todos.length > 0 ? (completedCount / todos.length) * 100 : 0;
+  
+  if (!isMounted) return null;
 
   return (
-    <Card className="w-full max-w-4xl shadow-2xl bg-card/80 backdrop-blur-sm border-white/10">
-      <CardHeader>
-        <CardTitle className="text-5xl font-bold text-center bg-gradient-to-r from-primary via-blue-400 to-cyan-300 text-transparent bg-clip-text">
-          Please Do
-        </CardTitle>
-        <CardDescription className="text-center text-lg">
-          Your Ultimate Task Manager
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <AddTodoForm onAddTodo={handleAddTodo} />
-        
-        <Separator className="my-4" />
-
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold">Tasks</h3>
-            <span className="text-sm text-muted-foreground">{completedCount} / {todos.length} completed</span>
+    <>
+      <Card className="w-full max-w-4xl min-h-[80vh] m-auto mt-10 mb-20 bg-background/30 backdrop-blur-xl border-2 border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
+        <CardHeader className="text-center">
+          <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-300 text-transparent bg-clip-text pb-2">
+            Please Do
+          </CardTitle>
+          <CardDescription className="text-lg text-foreground/70">
+            The Future of Task Management
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6 p-4 sm:p-6">
+          <div className="space-y-2">
+             <div className="flex justify-between items-center px-2">
+              <h3 className="text-lg font-semibold text-foreground/80">Progress</h3>
+              <span className="text-sm text-muted-foreground">{completedCount} / {todos.length} completed</span>
+            </div>
+            <Progress value={progress} className="h-2 [&>div]:bg-gradient-to-r [&>div]:from-primary [&>div]:via-fuchsia-400 [&>div]:to-cyan-300" />
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
-        
-        <TodoFilters filter={filter} onFilterChange={setFilter} />
+          
+          <TodoFilters filter={filter} onFilterChange={setFilter} />
 
-        <div className="max-h-[40vh] overflow-y-auto pr-2">
-          {filteredTodos.length > 0 ? (
-            filteredTodos.map((todo) => (
-              <TodoItem
-                key={todo.id}
-                todo={todo}
-                onToggle={handleToggleComplete}
-                onDelete={handleDeleteTodo}
-                onEdit={handleEditTodo}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">
-              No tasks match your filters.
-            </p>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          <div className="max-h-[50vh] overflow-y-auto pr-2 rounded-lg border border-white/5">
+            <AnimatePresence>
+              {filteredTodos.length > 0 ? (
+                filteredTodos.map((todo) => (
+                  <TodoItem
+                    key={todo.id}
+                    todo={todo}
+                    onToggle={handleToggleComplete}
+                    onDelete={handleDeleteTodo}
+                    onEdit={handleEditTodo}
+                  />
+                ))
+              ) : (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center text-muted-foreground py-16"
+                >
+                  No tasks match your filters. Time to chill?
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </div>
+        </CardContent>
+      </Card>
+      <AddTodoForm onAddTodo={handleAddTodo} />
+    </>
   );
 }

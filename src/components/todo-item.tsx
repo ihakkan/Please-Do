@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 import type { Todo } from "./todo-list";
 import { getPriorityStyles } from "@/lib/utils";
-
+import { motion } from "framer-motion";
 
 interface TodoItemProps {
   todo: Todo;
@@ -50,8 +50,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     }
   };
 
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <div className="flex items-center gap-4 p-4 border-b transition-colors hover:bg-muted/20 animate-in fade-in-0 zoom-in-95">
+    <motion.div
+      variants={itemVariants}
+      initial="hidden"
+      animate="visible"
+      exit="hidden"
+      layout
+      className="flex items-center gap-4 p-4 border-b border-white/10 transition-colors bg-black/10 hover:bg-white/5"
+    >
       <Checkbox
         id={`todo-${todo.id}`}
         checked={todo.completed}
@@ -69,7 +81,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             onKeyDown={handleKeyDown}
             onBlur={handleSave}
             autoFocus
-            className="flex-grow"
+            className="flex-grow bg-transparent"
           />
         ) : (
           <label
@@ -97,7 +109,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           </div>
         </div>
       </div>
-       <Badge variant="outline" className={cn("hidden sm:flex", priorityStyles)}>
+       <Badge variant="outline" className={cn("hidden sm:flex text-xs font-normal", priorityStyles)}>
         {todo.priority}
       </Badge>
       <div className="flex gap-1">
@@ -129,6 +141,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           <Trash2 className="h-5 w-5 text-destructive" />
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };
