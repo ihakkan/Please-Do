@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
-import { Plus } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -10,23 +9,34 @@ import {
   CardDescription,
   CardFooter,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "./todo-item";
-import { Separator } from "./ui/separator";
+import { AddTodoForm } from "./add-todo-form";
+import { TodoFilters } from "./todo-filters";
+import { categories } from "@/lib/data";
+
+export type Priority = "low" | "medium" | "high";
+export type Category = "work" | "study" | "personal" | "fitness" | "other";
 
 export interface Todo {
   id: string;
   text: string;
   completed: boolean;
+  priority: Priority;
+  category: Category;
+  createdAt: number;
 }
 
-const LOCAL_STORAGE_KEY = "pleaseDoTodos";
+const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
 
 export function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodoText, setNewTodoText] = useState("");
   const [isMounted, setIsMounted] = useState(false);
+  const [filter, setFilter] = useState<{
+    status: "all" | "completed" | "pending";
+    categories: Category[];
+  }>({ status: "all", categories: [...categories] });
 
   useEffect(() => {
     try {
@@ -51,19 +61,22 @@ export function TodoList() {
     }
   }, [todos, isMounted]);
 
-  const handleAddTodo = (e: FormEvent) => {
-    e.preventDefault();
-    if (newTodoText.trim()) {
-      setTodos([
-        ...todos,
-        {
-          id: crypto.randomUUID(),
-          text: newTodoText.trim(),
-          completed: false,
-        },
-      ]);
-      setNewTodoText("");
-    }
+  const handleAddTodo = (
+    text: string,
+    priority: Priority,
+    category: Category
+  ) => {
+    setTodos([
+      ...todos,
+      {
+        id: crypto.randomUUID(),
+        text,
+        completed: false,
+        priority,
+        category,
+        createdAt: Date.now(),
+      },
+    ]);
   };
 
   const handleToggleComplete = (id: string) => {
@@ -86,39 +99,51 @@ export function TodoList() {
     );
   };
 
-  const completedCount = todos.filter(t => t.completed).length;
-  const pendingCount = todos.length - completedCount;
+  const filteredTodos = useMemo(() => {
+    return todos
+      .filter((todo) => {
+        const statusMatch =
+          filter.status === "all" ||
+          (filter.status === "completed" && todo.completed) ||
+          (filter.status === "pending" && !todo.completed);
+
+        const categoryMatch = filter.categories.includes(todo.category);
+        return statusMatch && categoryMatch;
+      })
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }, [todos, filter]);
+
+  const completedCount = todos.filter((t) => t.completed).length;
+  const progress = todos.length > 0 ? (completedCount / todos.length) * 100 : 0;
 
   return (
-    <Card className="w-full max-w-2xl shadow-lg">
+    <Card className="w-full max-w-4xl shadow-2xl bg-card/80 backdrop-blur-sm border-white/10">
       <CardHeader>
-        <CardTitle className="text-4xl font-headline font-bold text-center">
+        <CardTitle className="text-5xl font-bold text-center bg-gradient-to-r from-primary via-blue-400 to-cyan-300 text-transparent bg-clip-text">
           Please Do
         </CardTitle>
-        <CardDescription className="text-center">
-          A simple and beautiful way to manage your tasks.
+        <CardDescription className="text-center text-lg">
+          Your Ultimate Task Manager
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleAddTodo} className="flex gap-2 mb-6">
-          <Input
-            type="text"
-            value={newTodoText}
-            onChange={(e) => setNewTodoText(e.target.value)}
-            placeholder="What needs to be done?"
-            aria-label="New todo input"
-            className="text-base"
-          />
-          <Button type="submit" aria-label="Add todo">
-            <Plus className="h-5 w-5" />
-          </Button>
-        </form>
+      <CardContent className="space-y-6">
+        <AddTodoForm onAddTodo={handleAddTodo} />
         
         <Separator className="my-4" />
 
-        <div>
-          {todos.length > 0 ? (
-            todos.map((todo) => (
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold">Tasks</h3>
+            <span className="text-sm text-muted-foreground">{completedCount} / {todos.length} completed</span>
+          </div>
+          <Progress value={progress} className="h-2" />
+        </div>
+        
+        <TodoFilters filter={filter} onFilterChange={setFilter} />
+
+        <div className="max-h-[40vh] overflow-y-auto pr-2">
+          {filteredTodos.length > 0 ? (
+            filteredTodos.map((todo) => (
               <TodoItem
                 key={todo.id}
                 todo={todo}
@@ -129,17 +154,11 @@ export function TodoList() {
             ))
           ) : (
             <p className="text-center text-muted-foreground py-8">
-              Your task list is empty. Add a task to get started!
+              No tasks match your filters.
             </p>
           )}
         </div>
       </CardContent>
-      {todos.length > 0 && (
-        <CardFooter className="text-sm text-muted-foreground justify-between">
-           <span>{pendingCount} pending</span>
-           <span>{completedCount} completed</span>
-        </CardFooter>
-      )}
     </Card>
   );
 }
