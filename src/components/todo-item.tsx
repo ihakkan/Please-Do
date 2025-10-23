@@ -62,7 +62,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
       animate="visible"
       exit="hidden"
       layout
-      className="flex items-center gap-4 p-4 border-b border-white/10 transition-colors bg-black/10 hover:bg-white/5"
+      className="flex items-center gap-2 sm:gap-4 p-3 sm:p-4 border-b border-white/10 transition-colors bg-black/10 hover:bg-white/5"
     >
       <Checkbox
         id={`todo-${todo.id}`}
@@ -71,6 +71,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
         aria-label={`Mark "${todo.text}" as ${
           todo.completed ? "incomplete" : "complete"
         }`}
+        className="w-5 h-5 sm:w-5 sm:h-5"
       />
       <div className="flex-grow grid gap-2">
         {isEditing ? (
@@ -81,20 +82,20 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             onKeyDown={handleKeyDown}
             onBlur={handleSave}
             autoFocus
-            className="flex-grow bg-transparent"
+            className="flex-grow bg-transparent h-auto"
           />
         ) : (
           <label
             htmlFor={`todo-${todo.id}`}
             className={cn(
-              "flex-grow cursor-pointer text-base transition-colors",
+              "flex-grow cursor-pointer text-sm sm:text-base transition-colors",
               todo.completed && "text-muted-foreground line-through"
             )}
           >
             {todo.text}
           </label>
         )}
-        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
              <Calendar className="h-3 w-3" />
             {formatDistanceToNow(new Date(todo.createdAt), { addSuffix: true })}
@@ -103,7 +104,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             <Tag className="h-3 w-3" />
             <span className="capitalize">{todo.category}</span>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="hidden sm:flex items-center gap-1">
             <Zap className="h-3 w-3" />
             <span className="capitalize">{todo.priority}</span>
           </div>
@@ -112,15 +113,16 @@ export const TodoItem: React.FC<TodoItemProps> = ({
        <Badge variant="outline" className={cn("hidden sm:flex text-xs font-normal", priorityStyles)}>
         {todo.priority}
       </Badge>
-      <div className="flex gap-1">
+      <div className="flex gap-0 sm:gap-1">
         {isEditing ? (
           <Button
             variant="ghost"
             size="icon"
             onClick={handleSave}
             aria-label="Save todo"
+            className="w-8 h-8 sm:w-10 sm:h-10"
           >
-            <Save className="h-5 w-5 text-primary" />
+            <Save className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           </Button>
         ) : (
           <Button
@@ -128,8 +130,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             size="icon"
             onClick={handleEdit}
             aria-label="Edit todo"
+            className="w-8 h-8 sm:w-10 sm:h-10"
           >
-            <Edit className="h-5 w-5" />
+            <Edit className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         )}
         <Button
@@ -137,8 +140,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({
           size="icon"
           onClick={() => onDelete(todo.id)}
           aria-label="Delete todo"
+          className="w-8 h-8 sm:w-10 sm:h-10"
         >
-          <Trash2 className="h-5 w-5 text-destructive" />
+          <Trash2 className="h-4 w-4 sm:h-5 sm:w-5 text-destructive" />
         </Button>
       </div>
     </motion.div>

@@ -119,8 +119,8 @@ export function TodoList() {
 
   return (
     <>
-      <Card className="w-full max-w-4xl min-h-[80vh] m-auto mt-10 mb-20 bg-background/30 backdrop-blur-xl border-2 border-primary/20 shadow-2xl shadow-primary/10 rounded-2xl">
-        <CardHeader className="text-center">
+      <Card className="w-full max-w-4xl min-h-[calc(100vh-2rem)] sm:min-h-[80vh] m-auto sm:my-10 bg-background/30 backdrop-blur-xl border-2 border-primary/20 shadow-2xl shadow-primary/10 rounded-none sm:rounded-2xl">
+        <CardHeader className="text-center pt-8 sm:pt-6">
           <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-300 text-transparent bg-clip-text pb-2">
             Please Do
           </CardTitle>
@@ -139,7 +139,7 @@ export function TodoList() {
           
           <TodoFilters filter={filter} onFilterChange={setFilter} />
 
-          <div className="max-h-[50vh] overflow-y-auto pr-2 rounded-lg border border-white/5">
+          <div className="max-h-[calc(100vh-350px)] sm:max-h-[50vh] overflow-y-auto pr-2 rounded-lg border border-white/5">
             <AnimatePresence>
               {filteredTodos.length > 0 ? (
                 filteredTodos.map((todo) => (

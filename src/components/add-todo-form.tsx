@@ -51,9 +51,9 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
     <>
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-primary/80 backdrop-blur-sm shadow-lg shadow-primary/30 hover:bg-primary"
+        className="fixed bottom-4 right-4 h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-primary/80 backdrop-blur-sm shadow-lg shadow-primary/30 hover:bg-primary"
       >
-        <Plus className="h-8 w-8" />
+        <Plus className="h-7 w-7 sm:h-8 sm:w-8" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
