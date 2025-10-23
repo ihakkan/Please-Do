@@ -1,0 +1,22 @@
+{
+  "name": "Please Do",
+  "short_name": "PleaseDo",
+  "description": "A simple and beautiful todo list app.",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#A0D2EB",
+  "background_color": "#F0F0F0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}
