@@ -18,6 +18,7 @@ import {
 import { SlidersHorizontal } from "lucide-react";
 import type { Category } from "./todo-list";
 import { categories } from "@/lib/data";
+import { playSound } from "@/lib/sounds";
 
 interface TodoFiltersProps {
   filter: {
@@ -29,10 +30,12 @@ interface TodoFiltersProps {
 
 export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
   const handleStatusChange = (status: "all" | "completed" | "pending") => {
+    playSound("click");
     onFilterChange({ ...filter, status });
   };
 
   const handleCategoryToggle = (category: Category) => {
+    playSound("click");
     const newCategories = filter.categories.includes(category)
       ? filter.categories.filter((c) => c !== category)
       : [...filter.categories, category];
@@ -40,6 +43,11 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
   };
   
   const allCategoriesSelected = filter.categories.length === categories.length;
+
+  const handleAllCategoriesToggle = () => {
+    playSound("click");
+    onFilterChange({ ...filter, categories: allCategoriesSelected ? [] : [...categories] })
+  }
 
   return (
     <div className="flex items-center justify-between gap-4 p-2 rounded-lg bg-background/50 backdrop-blur-sm border border-white/10">
@@ -69,7 +77,7 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
           Completed
         </Button>
       </div>
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={(open) => playSound(open ? "open" : "click")}>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -89,7 +97,7 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
           <DropdownMenuSeparator />
            <DropdownMenuCheckboxItem
             checked={allCategoriesSelected}
-            onCheckedChange={() => onFilterChange({ ...filter, categories: allCategoriesSelected ? [] : [...categories] })}
+            onCheckedChange={handleAllCategoriesToggle}
           >
             All Categories
           </DropdownMenuCheckboxItem>

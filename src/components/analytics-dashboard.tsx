@@ -15,6 +15,7 @@ import { BarChart, PieChart, Bar, XAxis, YAxis, CartesianGrid, Pie, Cell } from 
 import { subDays, startOfMonth, format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/data";
+import { playSound } from "@/lib/sounds";
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
 type FilterType = "7days" | "month" | "all";
@@ -79,6 +80,10 @@ export function AnalyticsDashboard() {
     return [{ name: "Total", "Tasks Completed": totalTasksCompleted, "Tasks Pending": totalTasks - totalTasksCompleted }];
   }, [filteredTodos, filter, totalTasksCompleted, totalTasks]);
 
+  const handleFilterChange = (newFilter: FilterType) => {
+    playSound("click");
+    setFilter(newFilter);
+  }
 
   if (!isMounted) {
     return <div className="flex items-center justify-center min-h-screen text-lg text-primary">Loading Analytics...</div>;
@@ -89,9 +94,9 @@ export function AnalyticsDashboard() {
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <h1 className="text-4xl font-bold text-primary">Analytics</h1>
         <div className="flex items-center gap-2 p-1 rounded-lg bg-background/50 border border-white/10">
-          <Button variant={filter === '7days' ? 'secondary' : 'ghost'} onClick={() => setFilter('7days')} className="text-foreground">Last 7 days</Button>
-          <Button variant={filter === 'month' ? 'secondary' : 'ghost'} onClick={() => setFilter('month')} className="text-foreground">This Month</Button>
-          <Button variant={filter === 'all' ? 'secondary' : 'ghost'} onClick={() => setFilter('all')} className="text-foreground">All Time</Button>
+          <Button variant={filter === '7days' ? 'secondary' : 'ghost'} onClick={() => handleFilterChange('7days')} className="text-foreground">Last 7 days</Button>
+          <Button variant={filter === 'month' ? 'secondary' : 'ghost'} onClick={() => handleFilterChange('month')} className="text-foreground">This Month</Button>
+          <Button variant={filter === 'all' ? 'secondary' : 'ghost'} onClick={() => handleFilterChange('all')} className="text-foreground">All Time</Button>
         </div>
       </div>
 
@@ -100,7 +105,7 @@ export function AnalyticsDashboard() {
           <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
               <CardTitle className="text-foreground/80">Total Tasks Completed</CardTitle>
-              <CardDescription>Over the selected period</CardDescription>
+              <CardDescription className="text-foreground/70">Over the selected period</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-5xl font-bold text-cyan-300">{totalTasksCompleted}</p>
@@ -109,7 +114,7 @@ export function AnalyticsDashboard() {
            <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
               <CardTitle className="text-foreground/80">Completion Rate</CardTitle>
-              <CardDescription>Percentage of tasks completed</CardDescription>
+              <CardDescription className="text-foreground/70">Percentage of tasks completed</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-5xl font-bold text-fuchsia-400">{completionRate.toFixed(1)}%</p>
@@ -118,7 +123,7 @@ export function AnalyticsDashboard() {
           <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
               <CardTitle className="text-foreground/80">Streak</CardTitle>
-              <CardDescription>Coming Soon!</CardDescription>
+              <CardDescription className="text-foreground/70">Coming Soon!</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-5xl font-bold text-primary">🔥 0</p>
@@ -131,7 +136,7 @@ export function AnalyticsDashboard() {
         <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
           <CardHeader>
             <CardTitle className="text-foreground/80">Task Completion Rate</CardTitle>
-             <CardDescription>{filter === '7days' ? 'Completed tasks over the last 7 days' : 'Overview of completed vs. pending tasks'}</CardDescription>
+             <CardDescription className="text-foreground/70">{filter === '7days' ? 'Completed tasks over the last 7 days' : 'Overview of completed vs. pending tasks'}</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={{}} className="h-[300px] w-full">
@@ -156,7 +161,7 @@ export function AnalyticsDashboard() {
         <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
           <CardHeader>
             <CardTitle className="text-foreground/80">Category Productivity</CardTitle>
-            <CardDescription>Completed tasks by category</CardDescription>
+            <CardDescription className="text-foreground/70">Completed tasks by category</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={{}} className="h-[300px] w-full">

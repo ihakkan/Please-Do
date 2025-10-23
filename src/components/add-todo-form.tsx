@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import type { Priority, Category } from "./todo-list";
 import { priorities, categories } from "@/lib/data";
+import { playSound } from "@/lib/sounds";
 
 interface AddTodoFormProps {
   onAddTodo: (
@@ -47,10 +48,15 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
     }
   };
 
+  const handleOpen = () => {
+    playSound("open");
+    setIsOpen(true);
+  }
+
   return (
     <>
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpen}
         className="fixed bottom-4 right-4 h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-primary/80 backdrop-blur-sm shadow-lg shadow-primary/30 hover:bg-primary"
       >
         <Plus className="h-7 w-7 sm:h-8 sm:w-8" />
@@ -77,7 +83,10 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
             <div className="grid grid-cols-2 gap-4">
               <Select
                 value={priority}
-                onValueChange={(value) => setPriority(value as Priority)}
+                onValueChange={(value) => {
+                  playSound("click");
+                  setPriority(value as Priority)
+                }}
               >
                 <SelectTrigger aria-label="Priority">
                   <SelectValue placeholder="Priority" />
@@ -92,7 +101,10 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
               </Select>
               <Select
                 value={category}
-                onValueChange={(value) => setCategory(value as Category)}
+                onValueChange={(value) => {
+                  playSound("click");
+                  setCategory(value as Category)
+                }}
               >
                 <SelectTrigger aria-label="Category">
                   <SelectValue placeholder="Category" />

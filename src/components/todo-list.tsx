@@ -17,6 +17,7 @@ import { TodoFilters } from "./todo-filters";
 import { categories } from "@/lib/data";
 import { AnimatePresence, motion } from "framer-motion";
 import { LineChart } from "lucide-react";
+import { playSound } from "@/lib/sounds";
 
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
@@ -69,6 +70,7 @@ export function TodoList() {
     priority: Priority,
     category: Category
   ) => {
+    playSound("add");
     setTodos([
       {
         id: crypto.randomUUID(),
@@ -83,6 +85,10 @@ export function TodoList() {
   };
 
   const handleToggleComplete = (id: string) => {
+    const todo = todos.find(t => t.id === id);
+    if (todo) {
+      playSound(todo.completed ? "incomplete" : "complete");
+    }
     setTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed, completedAt: !todo.completed ? Date.now() : undefined } : todo
@@ -91,10 +97,12 @@ export function TodoList() {
   };
 
   const handleDeleteTodo = (id: string) => {
+    playSound("delete");
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
   const handleEditTodo = (id: string, newText: string) => {
+    playSound("click");
     setTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, text: newText } : todo
@@ -128,12 +136,12 @@ export function TodoList() {
           <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-300 text-transparent bg-clip-text pb-2">
             Please Do
           </CardTitle>
-          <CardDescription className="text-lg text-foreground/70">
+          <CardDescription className="text-lg text-foreground/80">
             The Future of Task Management
           </CardDescription>
           <div className="absolute top-4 right-4">
             <Link href="/dashboard" passHref>
-              <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary">
+              <Button onClick={() => playSound("navigate")} variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary">
                 <LineChart className="h-6 w-6" />
               </Button>
             </Link>

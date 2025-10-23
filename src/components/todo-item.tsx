@@ -11,6 +11,7 @@ import { formatDistanceToNow } from "date-fns";
 import type { Todo } from "./todo-list";
 import { getPriorityStyles } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { playSound } from "@/lib/sounds";
 
 interface TodoItemProps {
   todo: Todo;
@@ -31,6 +32,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
   const priorityStyles = getPriorityStyles(todo.priority);
 
   const handleEdit = () => {
+    playSound("click");
     setIsEditing(true);
   };
 
