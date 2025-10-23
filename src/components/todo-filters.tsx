@@ -9,6 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { SlidersHorizontal } from "lucide-react";
 import type { Category } from "./todo-list";
 import { categories } from "@/lib/data";
@@ -64,12 +70,20 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
         </Button>
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary flex-shrink-0">
-            <SlidersHorizontal className="mr-2 h-4 w-4" />
-            Category
-          </Button>
-        </DropdownMenuTrigger>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary flex-shrink-0">
+                  <SlidersHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Category</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <DropdownMenuContent className="bg-background/80 backdrop-blur-xl border-primary/50 text-foreground">
           <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
           <DropdownMenuSeparator />
