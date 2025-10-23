@@ -133,15 +133,15 @@ export function TodoList() {
           </CardDescription>
           <div className="absolute top-4 right-4">
             <Link href="/dashboard" passHref>
-              <Button variant="ghost" size="icon">
-                <LineChart className="h-6 w-6 text-primary" />
+              <Button variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary">
+                <LineChart className="h-6 w-6" />
               </Button>
             </Link>
           </div>
         </CardHeader>
         <CardContent className="space-y-6 p-4 sm:p-6">
           <div className="space-y-2">
-             <div className="flex justify-between items-center px-2">
+             <div className="flex justify-between items-center px-1">
               <h3 className="text-lg font-semibold text-foreground/80">Progress</h3>
               <span className="text-sm text-muted-foreground">{completedCount} / {todos.length} completed</span>
             </div>
@@ -150,7 +150,7 @@ export function TodoList() {
           
           <TodoFilters filter={filter} onFilterChange={setFilter} />
 
-          <div className="max-h-[calc(100vh-350px)] sm:max-h-[50vh] overflow-y-auto pr-2 rounded-lg border border-white/5">
+          <div className="max-h-[calc(100vh-350px)] sm:max-h-[calc(80vh-320px)] overflow-y-auto pr-2 rounded-lg border border-white/5">
             <AnimatePresence>
               {filteredTodos.length > 0 ? (
                 filteredTodos.map((todo) => (

@@ -36,8 +36,8 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
   const allCategoriesSelected = filter.categories.length === categories.length;
 
   return (
-    <div className="flex items-center justify-between gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-white/10">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between gap-4 p-2 rounded-lg bg-background/50 backdrop-blur-sm border border-white/10">
+      <div className="flex items-center gap-1 sm:gap-2">
         <Button
           variant={filter.status === "all" ? "secondary" : "ghost"}
           size="sm"
@@ -65,20 +65,21 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" size="sm" className="border-primary/50 text-primary">
+          <Button variant="outline" size="sm" className="border-primary/50 text-primary hover:bg-primary/10 hover:text-primary">
             <SlidersHorizontal className="mr-2 h-4 w-4" />
-            Filter
+            Category
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-background/80 backdrop-blur-xl border-primary/50">
-          <DropdownMenuLabel>Category</DropdownMenuLabel>
+        <DropdownMenuContent className="bg-background/80 backdrop-blur-xl border-primary/50 text-foreground">
+          <DropdownMenuLabel>Filter by Category</DropdownMenuLabel>
           <DropdownMenuSeparator />
            <DropdownMenuCheckboxItem
             checked={allCategoriesSelected}
             onCheckedChange={() => onFilterChange({ ...filter, categories: allCategoriesSelected ? [] : [...categories] })}
           >
-            All
+            All Categories
           </DropdownMenuCheckboxItem>
+          <DropdownMenuSeparator />
           {categories.map((category) => (
             <DropdownMenuCheckboxItem
               key={category}

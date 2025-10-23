@@ -81,17 +81,17 @@ export function AnalyticsDashboard() {
 
 
   if (!isMounted) {
-    return <div className="text-center p-8">Loading Analytics...</div>;
+    return <div className="flex items-center justify-center min-h-screen text-lg text-primary">Loading Analytics...</div>;
   }
 
   return (
-    <div className="p-4 sm:p-8 space-y-8">
+    <div className="p-4 sm:p-8 pt-20 sm:pt-8 space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h1 className="text-4xl font-bold text-primary">Analytics Dashboard</h1>
+        <h1 className="text-4xl font-bold text-primary">Analytics</h1>
         <div className="flex items-center gap-2 p-1 rounded-lg bg-background/50 border border-white/10">
-          <Button variant={filter === '7days' ? 'secondary' : 'ghost'} onClick={() => setFilter('7days')}>Last 7 days</Button>
-          <Button variant={filter === 'month' ? 'secondary' : 'ghost'} onClick={() => setFilter('month')}>This Month</Button>
-          <Button variant={filter === 'all' ? 'secondary' : 'ghost'} onClick={() => setFilter('all')}>All Time</Button>
+          <Button variant={filter === '7days' ? 'secondary' : 'ghost'} onClick={() => setFilter('7days')} className="text-foreground">Last 7 days</Button>
+          <Button variant={filter === 'month' ? 'secondary' : 'ghost'} onClick={() => setFilter('month')} className="text-foreground">This Month</Button>
+          <Button variant={filter === 'all' ? 'secondary' : 'ghost'} onClick={() => setFilter('all')} className="text-foreground">All Time</Button>
         </div>
       </div>
 
@@ -99,7 +99,7 @@ export function AnalyticsDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
-              <CardTitle>Total Tasks Completed</CardTitle>
+              <CardTitle className="text-foreground/80">Total Tasks Completed</CardTitle>
               <CardDescription>Over the selected period</CardDescription>
             </CardHeader>
             <CardContent>
@@ -108,7 +108,7 @@ export function AnalyticsDashboard() {
           </Card>
            <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
-              <CardTitle>Completion Rate</CardTitle>
+              <CardTitle className="text-foreground/80">Completion Rate</CardTitle>
               <CardDescription>Percentage of tasks completed</CardDescription>
             </CardHeader>
             <CardContent>
@@ -117,7 +117,7 @@ export function AnalyticsDashboard() {
           </Card>
           <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
-              <CardTitle>Streak</CardTitle>
+              <CardTitle className="text-foreground/80">Streak</CardTitle>
               <CardDescription>Coming Soon!</CardDescription>
             </CardHeader>
             <CardContent>
@@ -130,7 +130,7 @@ export function AnalyticsDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
           <CardHeader>
-            <CardTitle>Task Completion Rate</CardTitle>
+            <CardTitle className="text-foreground/80">Task Completion Rate</CardTitle>
              <CardDescription>{filter === '7days' ? 'Completed tasks over the last 7 days' : 'Overview of completed vs. pending tasks'}</CardDescription>
           </CardHeader>
           <CardContent>
@@ -138,7 +138,7 @@ export function AnalyticsDashboard() {
               <AnimatePresence>
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} key={filter}>
               <BarChart data={completionRateData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.5)" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border)/0.3)" />
                 <XAxis dataKey="name" stroke="hsl(var(--foreground)/0.7)" />
                 <YAxis stroke="hsl(var(--foreground)/0.7)" />
                 <ChartTooltip
@@ -155,7 +155,7 @@ export function AnalyticsDashboard() {
         </Card>
         <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
           <CardHeader>
-            <CardTitle>Category Productivity</CardTitle>
+            <CardTitle className="text-foreground/80">Category Productivity</CardTitle>
             <CardDescription>Completed tasks by category</CardDescription>
           </CardHeader>
           <CardContent>
@@ -163,7 +163,7 @@ export function AnalyticsDashboard() {
               {categoryData.length > 0 ? (
                 <PieChart>
                   <ChartTooltip content={<ChartTooltipContent nameKey="name" />} />
-                  <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
+                  <Pie data={categoryData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={{ fill: 'hsl(var(--foreground))' }}>
                     {categoryData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
