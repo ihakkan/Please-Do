@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -8,12 +9,14 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { TodoItem } from "./todo-item";
 import { AddTodoForm } from "./add-todo-form";
 import { TodoFilters } from "./todo-filters";
 import { categories } from "@/lib/data";
 import { AnimatePresence, motion } from "framer-motion";
+import { LineChart } from "lucide-react";
 
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
@@ -25,6 +28,7 @@ export interface Todo {
   priority: Priority;
   category: Category;
   createdAt: number;
+  completedAt?: number;
 }
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
@@ -81,7 +85,7 @@ export function TodoList() {
   const handleToggleComplete = (id: string) => {
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        todo.id === id ? { ...todo, completed: !todo.completed, completedAt: !todo.completed ? Date.now() : undefined } : todo
       )
     );
   };
@@ -120,13 +124,20 @@ export function TodoList() {
   return (
     <>
       <Card className="w-full max-w-4xl min-h-[calc(100vh-2rem)] sm:min-h-[80vh] m-auto sm:my-10 bg-background/30 backdrop-blur-xl border-2 border-primary/20 shadow-2xl shadow-primary/10 rounded-none sm:rounded-2xl">
-        <CardHeader className="text-center pt-8 sm:pt-6">
+        <CardHeader className="text-center pt-8 sm:pt-6 relative">
           <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-300 text-transparent bg-clip-text pb-2">
             Please Do
           </CardTitle>
           <CardDescription className="text-lg text-foreground/70">
             The Future of Task Management
           </CardDescription>
+          <div className="absolute top-4 right-4">
+            <Link href="/dashboard" passHref>
+              <Button variant="ghost" size="icon">
+                <LineChart className="h-6 w-6 text-primary" />
+              </Button>
+            </Link>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6 p-4 sm:p-6">
           <div className="space-y-2">
