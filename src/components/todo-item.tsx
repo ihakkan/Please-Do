@@ -1,6 +1,6 @@
 "use client";
 
-import type { FC, useState } from "react";
+import { type FC, useState } from "react";
 import { Check, Pencil, Save, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
