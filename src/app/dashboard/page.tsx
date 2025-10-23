@@ -1,3 +1,5 @@
+"use client";
+
 import { AnalyticsDashboard } from "@/components/analytics-dashboard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
