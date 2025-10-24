@@ -1,3 +1,4 @@
+
 "use client";
 
 import { AnalyticsDashboard } from "@/components/analytics-dashboard";
