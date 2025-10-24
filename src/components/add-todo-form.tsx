@@ -109,14 +109,14 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
       </TooltipProvider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-primary/50">
+        <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-primary/50 max-h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="text-primary">Add New Task</DialogTitle>
             <DialogDescription>
               What do you need to get done?
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="grid gap-4 py-4">
+          <form onSubmit={handleSubmit} className="grid gap-4 py-4 overflow-y-auto px-1">
             <Input
               id="new-todo"
               type="text"
@@ -194,7 +194,7 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
                 />
               </PopoverContent>
             </Popover>
-            <DialogFooter>
+            <DialogFooter className="pt-4">
               <Button type="submit" className="w-full">Add Task</Button>
             </DialogFooter>
           </form>
