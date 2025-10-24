@@ -30,8 +30,14 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
 
-export interface Todo {
+export interface Subtask {
   id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface Todo {
+  id:string;
   text: string;
   completed: boolean;
   priority: Priority;
@@ -39,6 +45,7 @@ export interface Todo {
   createdAt: number;
   completedAt?: number;
   dueDate?: number;
+  subtasks: Subtask[];
 }
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
@@ -140,6 +147,7 @@ export function TodoList() {
         category,
         createdAt: Date.now(),
         dueDate: dueDate?.getTime(),
+        subtasks: [],
       },
       ...todos,
     ]);
@@ -178,6 +186,63 @@ export function TodoList() {
       )
     );
   };
+
+  const handleAddSubtask = (todoId: string, text: string) => {
+    if (!text.trim()) return;
+    playSound("add");
+    setTodos(todos.map(todo => {
+      if (todo.id === todoId) {
+        const newSubtask: Subtask = {
+          id: crypto.randomUUID(),
+          text,
+          completed: false,
+        };
+        return {
+          ...todo,
+          subtasks: [...todo.subtasks, newSubtask]
+        };
+      }
+      return todo;
+    }));
+  };
+
+  const handleToggleSubtask = (todoId: string, subtaskId: string) => {
+    playSound("click");
+    setTodos(todos.map(todo => {
+      if (todo.id === todoId) {
+        const newSubtasks = todo.subtasks.map(subtask =>
+          subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask
+        );
+        
+        const allSubtasksCompleted = newSubtasks.length > 0 && newSubtasks.every(st => st.completed);
+        
+        if (allSubtasksCompleted && !todo.completed) {
+           playSound("complete");
+        }
+
+        return {
+          ...todo,
+          subtasks: newSubtasks,
+          completed: allSubtasksCompleted ? true : todo.completed,
+          completedAt: allSubtasksCompleted ? Date.now() : todo.completedAt,
+        };
+      }
+      return todo;
+    }));
+  };
+  
+  const handleDeleteSubtask = (todoId: string, subtaskId: string) => {
+    playSound("delete");
+    setTodos(todos.map(todo => {
+      if (todo.id === todoId) {
+        return {
+          ...todo,
+          subtasks: todo.subtasks.filter(st => st.id !== subtaskId)
+        };
+      }
+      return todo;
+    }));
+  }
 
   const filteredTodos = useMemo(() => {
     return todos
@@ -293,6 +358,9 @@ export function TodoList() {
                     onToggle={handleToggleComplete}
                     onDelete={handleDeleteTodo}
                     onEdit={handleEditTodo}
+                    onAddSubtask={handleAddSubtask}
+                    onToggleSubtask={handleToggleSubtask}
+                    onDeleteSubtask={handleDeleteSubtask}
                   />
                 ))
               ) : (
