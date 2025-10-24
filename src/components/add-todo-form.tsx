@@ -126,45 +126,43 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
               className="col-span-3"
               autoFocus
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Select
-                value={priority}
-                onValueChange={(value) => {
-                  playSound("click");
-                  setPriority(value as Priority);
-                }}
-              >
-                <SelectTrigger aria-label="Priority">
-                  <SelectValue placeholder="Priority" />
-                </SelectTrigger>
-                <SelectContent>
-                  {priorities.map((p) => (
-                    <SelectItem key={p} value={p}>
-                      <span className="capitalize">{p}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select
-                value={category}
-                onValueChange={(value) => {
-                  playSound("click");
-                  setCategory(value as Category);
-                }}
-              >
-                <SelectTrigger aria-label="Category">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      <span className="capitalize">{c}</span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-             <Popover>
+            <Select
+              value={priority}
+              onValueChange={(value) => {
+                playSound("click");
+                setPriority(value as Priority);
+              }}
+            >
+              <SelectTrigger aria-label="Priority">
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                {priorities.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    <span className="capitalize">{p}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={category}
+              onValueChange={(value) => {
+                playSound("click");
+                setCategory(value as Category);
+              }}
+            >
+              <SelectTrigger aria-label="Category">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((c) => (
+                  <SelectItem key={c} value={c}>
+                    <span className="capitalize">{c}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
