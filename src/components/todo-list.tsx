@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from 'next/link';
 import {
   Card,
@@ -26,6 +26,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { LineChart } from "lucide-react";
 import { playSound } from "@/lib/sounds";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
@@ -92,6 +94,7 @@ export function TodoList() {
   const [showMobileTooltip, setShowMobileTooltip] = useState(false);
   const isMobile = useIsMobile();
   const [completionAnimation, setCompletionAnimation] = useState<{ id: number; position: { x: number; y: number } } | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (isMobile) {
@@ -178,10 +181,31 @@ export function TodoList() {
       )
     );
   };
+  
+  const handleUndoDelete = useCallback((deletedTodo: Todo) => {
+    setTodos(prevTodos => {
+      // Find the original index to insert the todo back
+      // For simplicity, we add it back to the top, but you could store index to be more precise
+      return [deletedTodo, ...prevTodos].sort((a, b) => b.createdAt - a.createdAt);
+    });
+  }, []);
 
   const handleDeleteTodo = (id: string) => {
     playSound("delete");
+    const todoToDelete = todos.find((todo) => todo.id === id);
+    if (!todoToDelete) return;
+
     setTodos(todos.filter((todo) => todo.id !== id));
+
+    toast({
+      title: "Task deleted",
+      description: `"${todoToDelete.text}" has been moved to the bin.`,
+      action: (
+        <ToastAction altText="Undo" onClick={() => handleUndoDelete(todoToDelete)}>
+          Undo
+        </ToastAction>
+      ),
+    });
   };
 
   const handleEditTodo = (id: string, newText: string, newDueDate?: Date) => {
