@@ -57,9 +57,9 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
     <>
       <Button
         onClick={handleOpen}
-        className="fixed bottom-4 right-4 h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-primary/80 backdrop-blur-sm shadow-lg shadow-primary/30 hover:bg-primary"
+        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 h-16 w-16 rounded-full bg-gradient-to-br from-primary via-fuchsia-500 to-cyan-400 text-white shadow-lg shadow-primary/40 transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:shadow-primary/50 focus:scale-110 animate-pulse-slow"
       >
-        <Plus className="h-7 w-7 sm:h-8 sm:w-8" />
+        <Plus className="h-8 w-8" />
       </Button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
