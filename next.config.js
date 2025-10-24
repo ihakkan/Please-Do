@@ -6,6 +6,9 @@ const withPWA = withPWAInit({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching,
+  fallbacks: {
+    document: '/offline',
+  }
 });
 
 /** @type {import('next').NextConfig} */
@@ -26,7 +29,8 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'https'
+        ,
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
