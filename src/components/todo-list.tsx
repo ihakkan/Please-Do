@@ -137,7 +137,7 @@ export function TodoList() {
             Please Do
           </CardTitle>
           <CardDescription className="text-lg text-foreground/80">
-            Get it done. Beautifully.
+            Get it done.
           </CardDescription>
           <div className="absolute top-4 right-4">
             <Link href="/dashboard" passHref>
