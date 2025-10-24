@@ -347,7 +347,7 @@ export function TodoList() {
               ))}
             </motion.div>
           </CardTitle>
-          <CardDescription className="text-lg text-foreground/80">
+          <CardDescription className="text-2xl font-cursive bg-gradient-to-r from-violet-400 to-cyan-300 text-transparent bg-clip-text">
             Get it done.
           </CardDescription>
           <div className="absolute top-4 right-4">

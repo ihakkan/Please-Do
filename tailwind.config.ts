@@ -1,3 +1,4 @@
+
 import type {Config} from 'tailwindcss';
 
 export default {
@@ -13,6 +14,7 @@ export default {
         body: ['"PT Sans"', 'sans-serif'],
         headline: ['"PT Sans"', 'sans-serif'],
         code: ['monospace'],
+        cursive: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         background: 'hsl(var(--background))',
