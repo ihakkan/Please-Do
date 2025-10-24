@@ -67,8 +67,12 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
     }
   }, [isMobile]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    handleSubmit();
+  };
+
+  const handleSubmit = () => {
     if (newTodoText.trim()) {
       onAddTodo(newTodoText.trim(), priority, category, dueDate);
       setNewTodoText("");
@@ -116,88 +120,89 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
               What do you need to get done?
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmit} className="grid gap-4 py-4 overflow-y-auto px-1">
-            <Input
-              id="new-todo"
-              type="text"
-              value={newTodoText}
-              onChange={(e) => setNewTodoText(e.target.value)}
-              placeholder="e.g. Design a new UI"
-              className="col-span-3"
-              autoFocus
-            />
-            <Select
-              value={priority}
-              onValueChange={(value) => {
-                playSound("click");
-                setPriority(value as Priority);
-              }}
-            >
-              <SelectTrigger aria-label="Priority">
-                <SelectValue placeholder="Priority" />
-              </SelectTrigger>
-              <SelectContent>
-                {priorities.map((p) => (
-                  <SelectItem key={p} value={p}>
-                    <span className="capitalize">{p}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select
-              value={category}
-              onValueChange={(value) => {
-                playSound("click");
-                setCategory(value as Category);
-              }}
-            >
-              <SelectTrigger aria-label="Category">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((c) => (
-                  <SelectItem key={c} value={c}>
-                    <span className="capitalize">{c}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "justify-start text-left font-normal relative",
-                    !dueDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dueDate ? format(dueDate, "PPP") : <span>Pick a due date</span>}
-                  {dueDate && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 absolute right-1"
-                      onClick={handleResetDueDate}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={setDueDate}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-            <DialogFooter className="pt-4">
-              <Button type="submit" className="w-full">Add Task</Button>
-            </DialogFooter>
-          </form>
+          <div className="flex-grow overflow-y-auto px-1 py-4">
+            <form id="add-todo-form" onSubmit={handleFormSubmit} className="grid gap-4">
+              <Input
+                id="new-todo"
+                type="text"
+                value={newTodoText}
+                onChange={(e) => setNewTodoText(e.target.value)}
+                placeholder="e.g. Design a new UI"
+                autoFocus
+              />
+              <Select
+                value={priority}
+                onValueChange={(value) => {
+                  playSound("click");
+                  setPriority(value as Priority);
+                }}
+              >
+                <SelectTrigger aria-label="Priority">
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  {priorities.map((p) => (
+                    <SelectItem key={p} value={p}>
+                      <span className="capitalize">{p}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={category}
+                onValueChange={(value) => {
+                  playSound("click");
+                  setCategory(value as Category);
+                }}
+              >
+                <SelectTrigger aria-label="Category">
+                  <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      <span className="capitalize">{c}</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </form>
+          </div>
+          <DialogFooter className="pt-4 flex-row justify-between w-full">
+             <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "justify-start text-left font-normal relative w-auto",
+                      !dueDate && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dueDate ? format(dueDate, "PPP") : <span>Pick a due date</span>}
+                    {dueDate && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 absolute right-1"
+                        onClick={handleResetDueDate}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={setDueDate}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            <Button type="button" onClick={handleSubmit}>Add Task</Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
