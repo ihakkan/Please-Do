@@ -126,7 +126,7 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
               className="col-span-3"
               autoFocus
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Select
                 value={priority}
                 onValueChange={(value) => {
