@@ -2,15 +2,21 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Check, Edit, Save, Trash2, Tag, Zap, Calendar } from "lucide-react";
+import { Check, Edit, Save, Trash2, Tag, Zap, Calendar, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Calendar as CalendarPicker } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { formatDistanceToNow } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import type { Todo } from "./todo-list";
-import { getPriorityStyles } from "@/lib/utils";
+import { getPriorityStyles, getDueDateStyles } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { playSound } from "@/lib/sounds";
 
@@ -18,7 +24,7 @@ interface TodoItemProps {
   todo: Todo;
   onToggle: (id: string, element: HTMLButtonElement | null) => void;
   onDelete: (id: string) => void;
-  onEdit: (id: string, text: string) => void;
+  onEdit: (id: string, text: string, dueDate?: Date) => void;
 }
 
 export const TodoItem: React.FC<TodoItemProps> = ({
@@ -29,9 +35,13 @@ export const TodoItem: React.FC<TodoItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
+  const [editDueDate, setEditDueDate] = useState(
+    todo.dueDate ? new Date(todo.dueDate) : undefined
+  );
   const checkboxRef = useRef<HTMLButtonElement>(null);
-  
+
   const priorityStyles = getPriorityStyles(todo.priority);
+  const dueDateStyles = getDueDateStyles(todo.dueDate, todo.completed);
 
   const handleEdit = () => {
     playSound("click");
@@ -40,19 +50,25 @@ export const TodoItem: React.FC<TodoItemProps> = ({
 
   const handleSave = () => {
     if (editText.trim()) {
-      onEdit(todo.id, editText.trim());
+      onEdit(todo.id, editText.trim(), editDueDate);
       setIsEditing(false);
     }
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSave();
     } else if (e.key === "Escape") {
       setEditText(todo.text);
+      setEditDueDate(todo.dueDate ? new Date(todo.dueDate) : undefined);
       setIsEditing(false);
     }
   };
+  
+  const handleResetDueDate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditDueDate(undefined);
+  }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -80,15 +96,49 @@ export const TodoItem: React.FC<TodoItemProps> = ({
       />
       <div className="flex-grow grid gap-2">
         {isEditing ? (
-          <Input
-            type="text"
-            value={editText}
-            onChange={(e) => setEditText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onBlur={handleSave}
-            autoFocus
-            className="flex-grow bg-transparent h-auto"
-          />
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Input
+              type="text"
+              value={editText}
+              onChange={(e) => setEditText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+              className="flex-grow bg-transparent h-auto"
+            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  size="sm"
+                  className={cn(
+                    "justify-start text-left font-normal h-auto text-xs",
+                    !editDueDate && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {editDueDate ? format(editDueDate, "PPP") : <span>Set date</span>}
+                  {editDueDate && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-5 w-5 absolute right-0.5"
+                      onClick={handleResetDueDate}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <CalendarPicker
+                  mode="single"
+                  selected={editDueDate}
+                  onSelect={setEditDueDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
         ) : (
           <label
             htmlFor={`todo-${todo.id}`}
@@ -100,7 +150,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             {todo.text}
           </label>
         )}
-        <div className="flex items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
              <Calendar className="h-3 w-3" />
             {formatDistanceToNow(new Date(todo.createdAt), { addSuffix: true })}
@@ -109,10 +159,12 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             <Tag className="h-3 w-3" />
             <span className="capitalize">{todo.category}</span>
           </div>
-          <div className="hidden sm:flex items-center gap-1">
-            <Zap className="h-3 w-3" />
-            <span className="capitalize">{todo.priority}</span>
-          </div>
+           {todo.dueDate && !todo.completed && (
+            <div className={cn("flex items-center gap-1", dueDateStyles.textColor)}>
+              <Calendar className="h-3 w-3" />
+              <span>{format(new Date(todo.dueDate), "MMM d")}</span>
+            </div>
+          )}
         </div>
       </div>
        <Badge variant="outline" className={cn("hidden sm:flex text-xs font-normal", priorityStyles)}>

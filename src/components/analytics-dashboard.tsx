@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -12,7 +13,7 @@ import {
   ChartLegendContent,
 } from "@/components/ui/chart";
 import { BarChart, PieChart, Bar, XAxis, YAxis, CartesianGrid, Pie, Cell } from "recharts";
-import { subDays, startOfMonth, format } from "date-fns";
+import { subDays, startOfMonth, format, isSameDay, differenceInCalendarDays } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { categories } from "@/lib/data";
 import { playSound } from "@/lib/sounds";
@@ -21,6 +22,61 @@ const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
 type FilterType = "7days" | "month" | "all";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#0088fe"];
+
+const calculateStreak = (todos: Todo[]): number => {
+  if (todos.length === 0) return 0;
+  
+  const completedDates = todos
+    .filter(todo => todo.completed && todo.completedAt)
+    .map(todo => new Date(todo.completedAt!))
+    .sort((a, b) => b.getTime() - a.getTime());
+
+  if (completedDates.length === 0) return 0;
+
+  const uniqueCompletionDays = completedDates.reduce((acc, date) => {
+    if (!acc.some(d => isSameDay(d, date))) {
+      acc.push(date);
+    }
+    return acc;
+  }, [] as Date[]);
+
+  let streak = 0;
+  let today = new Date();
+
+  // If the last completion was not today or yesterday, streak is 0
+  if (differenceInCalendarDays(today, uniqueCompletionDays[0]) > 1) {
+    return 0;
+  }
+  
+  // If the last completion was today or yesterday, streak starts at 1
+  streak = 1;
+
+  // Check for consecutive days
+  for (let i = 1; i < uniqueCompletionDays.length; i++) {
+    const diff = differenceInCalendarDays(uniqueCompletionDays[i - 1], uniqueCompletionDays[i]);
+    if (diff === 1) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  
+  // If the latest completion was not today, and the streak is only 1, it means the last task was yesterday.
+  // if today no task is completed, then the streak is what it is.
+  // But if the last task was yesterday, and we are checking today, the streak continues.
+  // The logic seems to not count today if nothing is completed.
+  // Let's adjust, if the latest task is not today, we check if it was yesterday.
+   if (differenceInCalendarDays(today, uniqueCompletionDays[0]) === 1) {
+     // Streak is valid from yesterday.
+   } else if (!isSameDay(today, uniqueCompletionDays[0])) {
+     // Last completion was before yesterday.
+     return 0;
+   }
+
+
+  return streak;
+};
+
 
 export function AnalyticsDashboard() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -55,6 +111,7 @@ export function AnalyticsDashboard() {
   const totalTasksCompleted = filteredTodos.filter(t => t.completed).length;
   const totalTasks = filteredTodos.length;
   const completionRate = totalTasks > 0 ? (totalTasksCompleted / totalTasks) * 100 : 0;
+  const streak = useMemo(() => calculateStreak(todos), [todos]);
   
   const categoryData = useMemo(() => {
     return categories.map(category => ({
@@ -68,7 +125,7 @@ export function AnalyticsDashboard() {
         const last7Days = Array.from({ length: 7 }).map((_, i) => subDays(new Date(), i)).reverse();
         return last7Days.map(day => {
             const dayStr = format(day, 'MMM d');
-            const tasksOnDay = filteredTodos.filter(t => format(new Date(t.createdAt), 'MMM d') === dayStr);
+            const tasksOnDay = filteredTodos.filter(t => t.createdAt && format(new Date(t.createdAt), 'MMM d') === dayStr);
             const completedOnDay = tasksOnDay.filter(t => t.completed).length;
             return {
                 name: dayStr,
@@ -122,11 +179,11 @@ export function AnalyticsDashboard() {
           </Card>
           <Card className="bg-background/30 backdrop-blur-xl border-primary/20">
             <CardHeader>
-              <CardTitle className="text-foreground/80">Streak</CardTitle>
-              <CardDescription className="text-foreground/70">Coming Soon!</CardDescription>
+              <CardTitle className="text-foreground/80">Daily Streak</CardTitle>
+              <CardDescription className="text-foreground/70">Consecutive days completing tasks</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-5xl font-bold text-primary">🔥 0</p>
+              <p className="text-5xl font-bold text-primary">🔥 {streak}</p>
             </CardContent>
           </Card>
         </div>

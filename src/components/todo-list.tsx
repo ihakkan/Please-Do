@@ -38,6 +38,7 @@ export interface Todo {
   category: Category;
   createdAt: number;
   completedAt?: number;
+  dueDate?: number;
 }
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
@@ -126,7 +127,8 @@ export function TodoList() {
   const handleAddTodo = (
     text: string,
     priority: Priority,
-    category: Category
+    category: Category,
+    dueDate?: Date
   ) => {
     playSound("add");
     setTodos([
@@ -137,6 +139,7 @@ export function TodoList() {
         priority,
         category,
         createdAt: Date.now(),
+        dueDate: dueDate?.getTime(),
       },
       ...todos,
     ]);
@@ -167,11 +170,11 @@ export function TodoList() {
     setTodos(todos.filter((todo) => todo.id !== id));
   };
 
-  const handleEditTodo = (id: string, newText: string) => {
+  const handleEditTodo = (id: string, newText: string, newDueDate?: Date) => {
     playSound("click");
     setTodos(
       todos.map((todo) =>
-        todo.id === id ? { ...todo, text: newText } : todo
+        todo.id === id ? { ...todo, text: newText, dueDate: newDueDate?.getTime() } : todo
       )
     );
   };
@@ -187,7 +190,21 @@ export function TodoList() {
         const categoryMatch = filter.categories.includes(todo.category);
         return statusMatch && categoryMatch;
       })
-      .sort((a, b) => b.createdAt - a.createdAt);
+      .sort((a, b) => {
+        if (a.completed !== b.completed) {
+          return a.completed ? 1 : -1;
+        }
+        if (a.dueDate && b.dueDate) {
+          return a.dueDate - b.dueDate;
+        }
+        if (a.dueDate) {
+          return -1;
+        }
+        if (b.dueDate) {
+          return 1;
+        }
+        return b.createdAt - a.createdAt;
+      });
   }, [todos, filter]);
 
   const completedCount = todos.filter((t) => t.completed).length;
