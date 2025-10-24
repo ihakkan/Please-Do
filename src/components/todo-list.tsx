@@ -42,6 +42,25 @@ export interface Todo {
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
 
+function CompletionAnimation({ id }: { id: number }) {
+  return (
+    <motion.div
+      key={id}
+      initial={{ opacity: 1, y: 0, scale: 0.5 }}
+      animate={{ opacity: 0, y: -200, scale: 1.5 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 2, ease: "easeOut" }}
+      className="fixed bottom-24 right-1/2 translate-x-1/2 z-50 flex flex-col items-center pointer-events-none"
+    >
+      <div className="text-5xl">👍</div>
+      <div className="text-lg font-semibold text-white bg-black/50 rounded-lg px-3 py-1 mt-2">
+        Well done!
+      </div>
+    </motion.div>
+  );
+}
+
+
 export function TodoList() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isMounted, setIsMounted] = useState(false);
@@ -51,6 +70,7 @@ export function TodoList() {
   }>({ status: "all", categories: [...categories] });
   const [showMobileTooltip, setShowMobileTooltip] = useState(false);
   const isMobile = useIsMobile();
+  const [completionAnimationId, setCompletionAnimationId] = useState(0);
 
   useEffect(() => {
     if (isMobile) {
@@ -113,6 +133,9 @@ export function TodoList() {
     const todo = todos.find(t => t.id === id);
     if (todo) {
       playSound(todo.completed ? "incomplete" : "complete");
+      if (!todo.completed) {
+        setCompletionAnimationId(Date.now());
+      }
     }
     setTodos(
       todos.map((todo) =>
@@ -251,6 +274,11 @@ export function TodoList() {
         </CardContent>
       </Card>
       <AddTodoForm onAddTodo={handleAddTodo} />
+      <AnimatePresence>
+        {completionAnimationId ? (
+          <CompletionAnimation key={completionAnimationId} id={completionAnimationId} />
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }
