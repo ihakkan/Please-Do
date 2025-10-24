@@ -112,7 +112,13 @@ export function TodoList() {
     try {
       const storedTodos = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedTodos) {
-        setTodos(JSON.parse(storedTodos));
+        const parsedTodos = JSON.parse(storedTodos);
+        // Data migration for older todos without subtasks
+        const migratedTodos = parsedTodos.map((todo: any) => ({
+          ...todo,
+          subtasks: todo.subtasks || [],
+        }));
+        setTodos(migratedTodos);
       }
     } catch (error) {
       console.error("Failed to parse todos from localStorage:", error);
@@ -199,7 +205,7 @@ export function TodoList() {
         };
         return {
           ...todo,
-          subtasks: [...todo.subtasks, newSubtask]
+          subtasks: [...(todo.subtasks || []), newSubtask]
         };
       }
       return todo;
@@ -210,7 +216,7 @@ export function TodoList() {
     playSound("click");
     setTodos(todos.map(todo => {
       if (todo.id === todoId) {
-        const newSubtasks = todo.subtasks.map(subtask =>
+        const newSubtasks = (todo.subtasks || []).map(subtask =>
           subtask.id === subtaskId ? { ...subtask, completed: !subtask.completed } : subtask
         );
         
@@ -237,7 +243,7 @@ export function TodoList() {
       if (todo.id === todoId) {
         return {
           ...todo,
-          subtasks: todo.subtasks.filter(st => st.id !== subtaskId)
+          subtasks: (todo.subtasks || []).filter(st => st.id !== subtaskId)
         };
       }
       return todo;

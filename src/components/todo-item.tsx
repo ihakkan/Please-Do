@@ -135,8 +135,9 @@ export const TodoItem: React.FC<TodoItemProps> = ({
     }
   };
 
-  const subtaskProgress = todo.subtasks.length > 0 
-    ? (todo.subtasks.filter(st => st.completed).length / todo.subtasks.length) * 100
+  const subtasks = todo.subtasks || [];
+  const subtaskProgress = subtasks.length > 0 
+    ? (subtasks.filter(st => st.completed).length / subtasks.length) * 100
     : 0;
 
   const itemVariants = {
@@ -234,18 +235,18 @@ export const TodoItem: React.FC<TodoItemProps> = ({
               <span>{format(new Date(todo.dueDate), "MMM d")}</span>
             </div>
           )}
-           {todo.subtasks && todo.subtasks.length > 0 && (
+           {subtasks.length > 0 && (
              <div className="flex items-center gap-1">
                <CheckCheck className="h-3 w-3" />
-               <span>{todo.subtasks.filter(st => st.completed).length}/{todo.subtasks.length}</span>
+               <span>{subtasks.filter(st => st.completed).length}/{subtasks.length}</span>
              </div>
            )}
         </div>
-        {todo.subtasks && todo.subtasks.length > 0 && !isEditing && (
+        {subtasks.length > 0 && !isEditing && (
           <div className="space-y-2 pt-2">
             <Progress value={subtaskProgress} className="h-1" />
             <AnimatePresence>
-              {todo.subtasks.map(subtask => (
+              {subtasks.map(subtask => (
                 <SubtaskItem 
                   key={subtask.id}
                   todoId={todo.id}
