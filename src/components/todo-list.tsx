@@ -152,6 +152,23 @@ export function TodoList() {
   const completedCount = todos.filter((t) => t.completed).length;
   const progress = todos.length > 0 ? (completedCount / todos.length) * 100 : 0;
   
+  const title = "Please Do";
+  const titleContainerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const titleCharVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
+
   if (!isMounted) return null;
 
   return (
@@ -159,7 +176,23 @@ export function TodoList() {
       <Card className="w-full max-w-4xl min-h-[calc(100vh-2rem)] sm:min-h-[80vh] m-auto sm:my-10 bg-background/30 backdrop-blur-xl border-2 border-primary/20 shadow-2xl shadow-primary/10 rounded-none sm:rounded-2xl">
         <CardHeader className="text-center pt-8 sm:pt-6 relative">
           <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-fuchsia-400 to-cyan-300 text-transparent bg-clip-text pb-2">
-            Please Do
+             <motion.div
+              variants={titleContainerVariants}
+              initial="hidden"
+              animate="visible"
+              aria-label={title}
+              className="flex justify-center"
+            >
+              {title.split("").map((char, index) => (
+                <motion.span
+                  key={index}
+                  variants={titleCharVariants}
+                  style={{ display: "inline-block", whiteSpace: "pre" }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </motion.div>
           </CardTitle>
           <CardDescription className="text-lg text-foreground/80">
             Get it done.
