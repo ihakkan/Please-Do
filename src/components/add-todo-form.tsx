@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -57,7 +58,8 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
     <>
       <Button
         onClick={handleOpen}
-        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 h-16 w-16 rounded-full bg-gradient-to-br from-primary via-fuchsia-500 to-cyan-400 text-white shadow-lg shadow-primary/40 transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl hover:shadow-primary/50 focus:scale-110 animate-pulse-slow"
+        className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 ease-in-out hover:scale-110 focus:scale-110"
+        aria-label="Add new task"
       >
         <Plus className="h-8 w-8" />
       </Button>
