@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
@@ -11,6 +12,12 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { TodoItem } from "./todo-item";
 import { AddTodoForm } from "./add-todo-form";
 import { TodoFilters } from "./todo-filters";
@@ -18,6 +25,7 @@ import { categories } from "@/lib/data";
 import { AnimatePresence, motion } from "framer-motion";
 import { LineChart } from "lucide-react";
 import { playSound } from "@/lib/sounds";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type Priority = "low" | "medium" | "high";
 export type Category = "work" | "study" | "personal" | "fitness" | "other";
@@ -41,6 +49,23 @@ export function TodoList() {
     status: "all" | "completed" | "pending";
     categories: Category[];
   }>({ status: "all", categories: [...categories] });
+  const [showMobileTooltip, setShowMobileTooltip] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile) {
+      const timer = setTimeout(() => {
+        setShowMobileTooltip(true);
+      }, 1000); // Show after 1 second
+      const hideTimer = setTimeout(() => {
+        setShowMobileTooltip(false);
+      }, 4000); // Hide after 4 seconds
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(hideTimer);
+      };
+    }
+  }, [isMobile]);
 
   useEffect(() => {
     try {
@@ -140,11 +165,20 @@ export function TodoList() {
             Get it done.
           </CardDescription>
           <div className="absolute top-4 right-4">
-            <Link href="/dashboard" passHref>
-              <Button onClick={() => playSound("navigate")} variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary">
-                <LineChart className="h-6 w-6" />
-              </Button>
-            </Link>
+             <TooltipProvider>
+              <Tooltip open={showMobileTooltip} onOpenChange={isMobile ? setShowMobileTooltip : undefined}>
+                <TooltipTrigger asChild>
+                  <Link href="/dashboard" passHref>
+                    <Button onClick={() => playSound("navigate")} variant="ghost" size="icon" className="text-primary hover:bg-primary/10 hover:text-primary">
+                      <LineChart className="h-7 w-7" />
+                    </Button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>View Analytics</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </CardHeader>
         <CardContent className="space-y-6 p-4 sm:p-6">
