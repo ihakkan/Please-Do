@@ -82,7 +82,7 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
           <TooltipTrigger asChild>
             <Button
               onClick={handleOpen}
-              className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 ease-in-out hover:scale-110 focus:scale-110"
+              className="fixed bottom-10 right-6 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 ease-in-out hover:scale-110 focus:scale-110"
               aria-label="Add new task"
             >
               <PenSquare className="h-8 w-8" />
