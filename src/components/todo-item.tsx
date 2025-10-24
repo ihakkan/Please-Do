@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Check, Edit, Save, Trash2, Tag, Zap, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -15,7 +16,7 @@ import { playSound } from "@/lib/sounds";
 
 interface TodoItemProps {
   todo: Todo;
-  onToggle: (id: string) => void;
+  onToggle: (id: string, element: HTMLButtonElement | null) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, text: string) => void;
 }
@@ -28,6 +29,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.text);
+  const checkboxRef = useRef<HTMLButtonElement>(null);
   
   const priorityStyles = getPriorityStyles(todo.priority);
 
@@ -67,9 +69,10 @@ export const TodoItem: React.FC<TodoItemProps> = ({
       className="flex items-center gap-2 sm:gap-4 p-3 sm:p-4 border-b border-white/10 transition-colors bg-black/10 hover:bg-white/5"
     >
       <Checkbox
+        ref={checkboxRef}
         id={`todo-${todo.id}`}
         checked={todo.completed}
-        onCheckedChange={() => onToggle(todo.id)}
+        onCheckedChange={() => onToggle(todo.id, checkboxRef.current)}
         aria-label={`Mark "${todo.text}" as ${
           todo.completed ? "incomplete" : "complete"
         }`}

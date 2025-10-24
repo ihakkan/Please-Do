@@ -42,15 +42,28 @@ export interface Todo {
 
 const LOCAL_STORAGE_KEY = "pleaseDoTodosAdvanced";
 
-function CompletionAnimation({ id }: { id: number }) {
+interface CompletionAnimationProps {
+  id: number;
+  position: { x: number; y: number };
+}
+
+function CompletionAnimation({ id, position }: CompletionAnimationProps) {
   return (
     <motion.div
       key={id}
-      initial={{ opacity: 1, y: 0, scale: 0.5 }}
-      animate={{ opacity: 0, y: -200, scale: 1.5 }}
+      initial={{ 
+        opacity: 1, 
+        y: position.y,
+        x: position.x,
+        scale: 0.5 
+      }}
+      animate={{ opacity: 0, y: position.y - 100, scale: 1.5 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 2, ease: "easeOut" }}
-      className="fixed bottom-24 right-1/2 translate-x-1/2 z-50 flex flex-col items-center pointer-events-none"
+      transition={{ duration: 1.5, ease: "easeOut" }}
+      className="fixed top-0 left-0 z-50 flex flex-col items-center pointer-events-none"
+      style={{
+        transform: 'translateX(-50%)', // Center the animation on the x-axis
+      }}
     >
       <div className="text-5xl">👍</div>
       <div className="text-lg font-semibold text-white bg-black/50 rounded-lg px-3 py-1 mt-2">
@@ -70,7 +83,7 @@ export function TodoList() {
   }>({ status: "all", categories: [...categories] });
   const [showMobileTooltip, setShowMobileTooltip] = useState(false);
   const isMobile = useIsMobile();
-  const [completionAnimationId, setCompletionAnimationId] = useState(0);
+  const [completionAnimation, setCompletionAnimation] = useState<{ id: number; position: { x: number; y: number } } | null>(null);
 
   useEffect(() => {
     if (isMobile) {
@@ -129,12 +142,17 @@ export function TodoList() {
     ]);
   };
 
-  const handleToggleComplete = (id: string) => {
+  const handleToggleComplete = (id: string, element: HTMLButtonElement | null) => {
     const todo = todos.find(t => t.id === id);
     if (todo) {
       playSound(todo.completed ? "incomplete" : "complete");
-      if (!todo.completed) {
-        setCompletionAnimationId(Date.now());
+      if (!todo.completed && element) {
+        const rect = element.getBoundingClientRect();
+        const position = {
+          x: rect.left + rect.width / 2,
+          y: rect.top,
+        };
+        setCompletionAnimation({ id: Date.now(), position });
       }
     }
     setTodos(
@@ -275,8 +293,12 @@ export function TodoList() {
       </Card>
       <AddTodoForm onAddTodo={handleAddTodo} />
       <AnimatePresence>
-        {completionAnimationId ? (
-          <CompletionAnimation key={completionAnimationId} id={completionAnimationId} />
+        {completionAnimation ? (
+          <CompletionAnimation 
+            key={completionAnimation.id} 
+            id={completionAnimation.id} 
+            position={completionAnimation.position} 
+          />
         ) : null}
       </AnimatePresence>
     </>
