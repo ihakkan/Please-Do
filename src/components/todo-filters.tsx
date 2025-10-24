@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import { SlidersHorizontal } from "lucide-react";
 import type { Category } from "./todo-list";
 import { categories } from "@/lib/data";
 import { playSound } from "@/lib/sounds";
+import { motion } from "framer-motion";
 
 interface TodoFiltersProps {
   filter: {
@@ -48,34 +50,32 @@ export function TodoFilters({ filter, onFilterChange }: TodoFiltersProps) {
     playSound("click");
     onFilterChange({ ...filter, categories: allCategoriesSelected ? [] : [...categories] })
   }
+  
+  const filters: ("all" | "completed" | "pending")[] = ["all", "pending", "completed"];
+
 
   return (
     <div className="flex items-center justify-between gap-4 p-2 rounded-lg bg-background/50 backdrop-blur-sm border border-white/10">
-      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-        <Button
-          variant={filter.status === "all" ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => handleStatusChange("all")}
-          className="text-foreground"
-        >
-          All
-        </Button>
-        <Button
-          variant={filter.status === "pending" ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => handleStatusChange("pending")}
-           className="text-foreground"
-        >
-          Pending
-        </Button>
-        <Button
-          variant={filter.status === "completed" ? "secondary" : "ghost"}
-          size="sm"
-          onClick={() => handleStatusChange("completed")}
-           className="text-foreground"
-        >
-          Completed
-        </Button>
+      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 bg-muted/50 p-1 rounded-lg">
+        {filters.map((status) => (
+          <Button
+            key={status}
+            variant={"ghost"}
+            size="sm"
+            onClick={() => handleStatusChange(status)}
+            className="text-foreground capitalize relative transition-colors duration-300"
+          >
+            {status}
+            {filter.status === status && (
+              <motion.div
+                layoutId="filter-indicator"
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
+                initial={false}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            )}
+          </Button>
+        ))}
       </div>
       <DropdownMenu onOpenChange={(open) => playSound(open ? "open" : "click")}>
         <TooltipProvider>
