@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PenSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,9 +20,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Priority, Category } from "./todo-list";
 import { priorities, categories } from "@/lib/data";
 import { playSound } from "@/lib/sounds";
+import { useIsMobile } from "@/hooks/use-mobile";
+
 
 interface AddTodoFormProps {
   onAddTodo: (
@@ -37,6 +45,19 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
   const [priority, setPriority] = useState<Priority>("medium");
   const [category, setCategory] = useState<Category>("personal");
   const [isOpen, setIsOpen] = useState(false);
+  const [showMobileTooltip, setShowMobileTooltip] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowMobileTooltip(true);
+      const timer = setTimeout(() => {
+        setShowMobileTooltip(false);
+      }, 3000); // Show for 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,13 +77,22 @@ export function AddTodoForm({ onAddTodo }: AddTodoFormProps) {
 
   return (
     <>
-      <Button
-        onClick={handleOpen}
-        className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 ease-in-out hover:scale-110 focus:scale-110"
-        aria-label="Add new task"
-      >
-        <PenSquare className="h-8 w-8" />
-      </Button>
+      <TooltipProvider>
+        <Tooltip open={showMobileTooltip} onOpenChange={isMobile ? setShowMobileTooltip : undefined}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={handleOpen}
+              className="fixed bottom-8 right-8 h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/40 transition-transform duration-300 ease-in-out hover:scale-110 focus:scale-110"
+              aria-label="Add new task"
+            >
+              <PenSquare className="h-8 w-8" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Add new task</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[425px] bg-background/80 backdrop-blur-xl border-primary/50">
