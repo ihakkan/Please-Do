@@ -1,4 +1,4 @@
-import withPWAInit from 'next-pwa';
+const withPWAInit = require('next-pwa');
 
 const withPWA = withPWAInit({
   dest: 'public',
@@ -32,4 +32,4 @@ const nextConfig = {
   },
 };
 
-export default withPWA(nextConfig);
+module.exports = withPWA(nextConfig);
