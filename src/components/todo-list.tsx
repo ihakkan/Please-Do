@@ -137,7 +137,7 @@ export function TodoList() {
             Please Do
           </CardTitle>
           <CardDescription className="text-lg text-foreground/80">
-            The Future of Task Management
+            A simple and beautiful todo list app.
           </CardDescription>
           <div className="absolute top-4 right-4">
             <Link href="/dashboard" passHref>
